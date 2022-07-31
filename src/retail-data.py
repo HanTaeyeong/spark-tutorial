@@ -1,29 +1,25 @@
-import sys
-from operator import add
-
-from pyspark.sql import SparkSession
+import lib.sparkLib as sparkLib 
 
 from pyspark.sql.functions import col
 from pyspark.sql.types import IntegerType,DecimalType,TimestampType
 
-
-spark = SparkSession\
-        .builder\
-        .appName("retail-data")\
-        .getOrCreate()
+spark =sparkLib.createSpark()
 
 path = "../data/retail-data/by-day/*.csv"
 dataFrame = spark.read.format('csv').option("header","true").load(path)
 dataFrame.show()
 
-dataFrame = dataFrame.withColumn("InvoiceNo",col("InvoiceNo").cast(IntegerType()))\
-        .withColumn("Quantity",col("Quantity").cast(IntegerType()))\
-        .withColumn("InvoiceDate",col("InvoiceDate").cast(TimestampType()))\
-        .withColumn("UnitPrice",col("UnitPrice").cast(DecimalType()))
-        
+schemaInfo=[{"InvoiceNo":IntegerType()},
+            {"Quantity":IntegerType()},
+            {"InvoiceDate":TimestampType()},
+            {"UnitPrice":DecimalType()},
+            ]
+
+dataFrame = sparkLib.getTypedDataFrame(dataFrame,schemaInfo)
+
 dataFrame.printSchema()
 
-dataFrame.createGlobalTempView("flight_data_2015")
+dataFrame.createGlobalTempView("retail-data")
 
 from pyspark.sql.functions import window,col
 

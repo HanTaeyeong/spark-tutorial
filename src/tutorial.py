@@ -1,23 +1,21 @@
 import sys
 from operator import add
 
+import lib.sparkLib as sparkLib 
+
 from pyspark.sql import SparkSession
 
 from pyspark.sql.functions import col
 from pyspark.sql.types import IntegerType,BooleanType,DateType
 
-
-spark = SparkSession\
-        .builder\
-        .appName("tutorialPy")\
-        .getOrCreate()
+spark = sparkLib.createSpark('tutorial')
 
 flightDataPath = "../data/flight-data/csv/2015-summary.csv"
 flightData2015 = spark.read.option("header","true").csv(flightDataPath)
-flightData2015.printSchema();
+flightData2015.printSchema()
 
-flightData2015 = flightData2015.withColumn("count",col("count").cast(IntegerType()))
-flightData2015.printSchema();
+flightData2015 = sparkLib.getTypedDataFrame(flightData2015,[{"count":IntegerType()}])  
+flightData2015.printSchema()
 
 flightData2015.createGlobalTempView("flight_data_2015")
 
@@ -34,7 +32,6 @@ flightData2015.show()
 # sqlway=spark.sql(query)
 # sqlway.show()
 
-
 from pyspark.sql.functions import desc
 flightData2015.groupBy("DEST_COUNTRY_NAME")\
     .sum("count")\
@@ -42,8 +39,6 @@ flightData2015.groupBy("DEST_COUNTRY_NAME")\
     .sort(desc("destination_total"))\
     .limit(10)\
     .show()
-
-
 
 # partitions = int(sys.argv[1]) if len(sys.argv) > 1 else 2
 # n = 100000 * partitions

@@ -1,1 +1,4 @@
 spark tutorial
+
+pip install -r requirements_dev.txt
+python3 {filename}
