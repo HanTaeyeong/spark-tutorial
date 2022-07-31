@@ -3,7 +3,7 @@ import lib.sparkLib as sparkLib
 from pyspark.sql.functions import col
 from pyspark.sql.types import IntegerType,DecimalType,TimestampType
 
-spark =sparkLib.createSpark()
+spark = sparkLib.createSpark()
 
 path = "../data/retail-data/by-day/*.csv"
 dataFrame = spark.read.format('csv').option("header","true").load(path)
