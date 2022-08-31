@@ -15,11 +15,10 @@ flightData2015 = spark.read.option("header","true").csv(flightDataPath)
 flightData2015.printSchema()
 
 flightData2015 = sparkLib.getTypedDataFrame(flightData2015,[{"count":IntegerType()}])  
-flightData2015.printSchema()
 
-flightData2015.createGlobalTempView("flight_data_2015")
+flightData2015.createOrReplaceTempView("flight_data_2015")
 
-flightData2015.show()
+#flightData2015.show()
 
 # query="""
 #     select DEST_COUNTRY_NAME, sum(count) as destination_total
@@ -32,13 +31,13 @@ flightData2015.show()
 # sqlway=spark.sql(query)
 # sqlway.show()
 
-from pyspark.sql.functions import desc
-flightData2015.groupBy("DEST_COUNTRY_NAME")\
-    .sum("count")\
-    .withColumnRenamed("sum(count)","destination_total")\
-    .sort(desc("destination_total"))\
-    .limit(10)\
-    .show()
+# from pyspark.sql.functions import desc
+# flightData2015.groupBy("DEST_COUNTRY_NAME")\
+#     .sum("count")\
+#     .withColumnRenamed("sum(count)","destination_total")\
+#     .sort(desc("destination_total"))\
+#     .limit(10)\
+#     .show()
 
 # partitions = int(sys.argv[1]) if len(sys.argv) > 1 else 2
 # n = 100000 * partitions

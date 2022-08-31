@@ -9,7 +9,7 @@ path = "../data/retail-data/by-day/*.csv"
 dataFrame = spark.read.format('csv').option("header","true").load(path)
 dataFrame.show()
 
-schemaInfo=[{"InvoiceNo":IntegerType()},
+schemaInfo = [{"InvoiceNo":IntegerType()},
             {"Quantity":IntegerType()},
             {"InvoiceDate":TimestampType()},
             {"UnitPrice":DecimalType()},
@@ -19,7 +19,7 @@ dataFrame = sparkLib.getTypedDataFrame(dataFrame,schemaInfo)
 
 dataFrame.printSchema()
 
-dataFrame.createGlobalTempView("retail-data")
+#dataFrame.createGlobalTempView("retail-data")
 
 from pyspark.sql.functions import window,col
 
@@ -30,7 +30,6 @@ dataFrame.selectExpr("CustomerId", "(UnitPrice * Quantity) as total_price","Invo
         .sum("total_price")\
         .sort(desc('sum(total_price)'))\
         .show(5)
-
 
 # query="""
 #     select DEST_COUNTRY_NAME, sum(count) as destination_total
