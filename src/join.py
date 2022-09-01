@@ -9,7 +9,7 @@ spark = sparkLib.createSpark()
 personData = [(0, "Bill Chambers", 0, [100]),
               (1, "Matei Zaharia", 1, [500, 250, 100]),
               (2, "Michael Armbrust", 1, [250, 100]),
-              (5,'TYTY',5,[300,200])
+              (5,'TYTY',5,[250,200])
               ]
 personHeader = ["id", "name", "graduate_program", "spark_status"]
 personDF = spark.createDataFrame(personData).toDF(*personHeader)
@@ -33,15 +33,17 @@ personDF.createOrReplaceGlobalTempView('person')
 graduateProgramDF.createOrReplaceGlobalTempView('graduateProgram')
 sparkStatusDF.createOrReplaceGlobalTempView('sparkStatus')
 
-joinExpression = personDF['graduate_program'] == graduateProgramDF['id']
+graduateProgramDF=graduateProgramDF.withColumnRenamed('id','graduate_id')
+
+joinExpression = personDF['graduate_program'] == graduateProgramDF['graduate_id']
 wrongJoinExpression =  personDF['name'] == graduateProgramDF['school']
 joinTypes=['inner','outer', 'left_outer', 'left_semi','left_anti','cross'] 
 
-#personDF.join(graduateProgramDF,joinExpression,joinTypes[0]).show()
+#personDF.join(graduateProgramDF,joinExpression,joinTypes[5]).show()
 #personDF.crossJoin(graduateProgramDF).show();
 
-#graduateProgramDF=graduateProgramDF.withColumnRenamed('id','graduate_id');
+graduateProgramDF.show();
 
-personDF.join(broadcast(graduateProgramDF),joinExpression).show()
+personDF.join(graduateProgramDF,joinExpression,joinTypes[1]).show()
 
 spark.stop()

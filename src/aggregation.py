@@ -17,14 +17,15 @@ dataFrame = spark.read.format('csv').option("header","true").load(path).coalesce
 dataFrame.cache()
 dataFrame = sparkLib.getTypedDataFrame(dataFrame,schemaInfo)
 
+
 #dataFrame.createOrReplaceTempView('dfTable')
 
 #541909       
 #dataFrame.show()
 
-# print(dataFrame.select(count('CustomerID')).show())
+#dataFrame.select(count('CustomerID')).show()
 
-# print(dataFrame.select(countDistinct('CustomerID')).show())
+#print(dataFrame.select(countDistinct('UnitPrice')).show())
 
 
 #count distinct 가 안되어서 생각해보니 실수형이 disinct 말이안댐 그래서 실험해보니 int형은 가능한듯
@@ -33,24 +34,27 @@ dataFrame = sparkLib.getTypedDataFrame(dataFrame,schemaInfo)
 #print(dataFrame.select(countDistinct('Quantity')).show())
 #print(dataFrame.select(approx_count_distinct('unitPrice',0.1)).show())
 
+#공식 document
 
 # df.select(first("StockCode"),last(StockCode)).show();
 # query="""SELECT first(StockCode), last(StockCode) FROM retail_data"""
+
 
 # dataFrame.createOrReplaceGlobalTempView("retail_data")
 # sqlway=spark.sql(query)
 # sqlway.show()
 
-#print(dataFrame.select(sum("Quantity")).show());
+#dataFrame.select(sum("Quantity")).show();
 #sumDistinct
 
 #dataFrame.selectExpr("(UnitPrice * Quantity) as total_price").select(sum('total_price')).show();
 
 # revenue per person
-#dataFrame.selectExpr("(UnitPrice * Quantity) as total_price").select(sum("total_price")/count('total_price'),avg('total_price')).show()
-
+#dataFrame.selectExpr("(UnitPrice * Quantity) as total_price")\
+#    .select(avg('total_price')).show()
 
 #dataFrame.select(stddev_pop('CustomerID'),stddev_samp('CustomerID')).show()
+
 #비대칭도와 첨도
 #https://dining-developer.tistory.com/17
 
@@ -59,7 +63,7 @@ dataFrame = sparkLib.getTypedDataFrame(dataFrame,schemaInfo)
 # exprList =  list(map(lambda x: expr(x) ,exprs))
 # dataFrame.groupBy("Country").agg(*exprList).show()
 
-#국가별 매출 현황
+# 국가별 매출 현황
 # dataFrame.selectExpr("(UnitPrice * Quantity) as total_price","Country")\
 #     .groupBy("Country")\
 #     .agg(expr("avg(total_price)"),expr("sum(total_price)"))\
